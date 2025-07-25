@@ -2,7 +2,7 @@
 
 Este proyecto es una plantilla con lo necesario para comenzar a desarrollar el front-end de la aplicación de la prueba técnica de Atom. Se base en Angular con la versión 17.3.6.
 
-## 🚀 Características
+## Características
 
 ### Autenticación
 - **Login/Registro**: Sistema completo de autenticación
@@ -25,7 +25,12 @@ Este proyecto es una plantilla con lo necesario para comenzar a desarrollar el f
 - **Standalone Components**: Componentes independientes
 - **Observables**: Manejo reactivo de datos
 
-## 🛠️ Tecnologías
+### Despliegue Automático
+- **CI/CD con GitHub Actions**: Despliegue automático a Firebase Hosting
+- **Workflow automatizado**: Deploy al hacer merge a master
+- **Gestión de ramas**: Flujo de trabajo con develop y master
+
+## Tecnologías
 
 - **Angular 17**: Framework principal
 - **Angular Material**: Componentes UI
@@ -33,6 +38,89 @@ Este proyecto es una plantilla con lo necesario para comenzar a desarrollar el f
 - **RxJS**: Programación reactiva
 - **TypeScript**: Tipado estático
 - **SCSS**: Estilos avanzados
+- **Firebase Hosting**: Hosting de la aplicación
+- **GitHub Actions**: CI/CD automatizado
+
+## Despliegue Automático
+
+Este proyecto cuenta con un sistema de despliegue completamente automatizado usando **GitHub Actions** y **Firebase Hosting**.
+
+### Proceso de Despliegue
+
+Para desplegar la aplicación, simplemente sigue estos pasos:
+
+1. **Crear una rama de desarrollo**
+   ```bash
+   git checkout -b feature/nueva-funcionalidad
+   ```
+
+2. **Desarrollar y hacer commit de tus cambios**
+   ```bash
+   git add .
+   git commit -m "feat: nueva funcionalidad"
+   git push origin feature/nueva-funcionalidad
+   ```
+
+3. **Hacer merge a develop**
+   - Crear un Pull Request hacia la rama `develop`
+   - Revisar y aprobar los cambios
+   - Hacer merge del PR
+
+4. **Hacer merge a master para desplegar**
+   - Crear un Pull Request desde `develop` hacia `master`
+   - Al hacer merge a `master`, se **activa automáticamente** el despliegue
+
+### Flujo de Trabajo
+
+```
+feature/branch → develop → master → DEPLOY AUTOMÁTICO
+```
+
+### Configuración del CI/CD
+
+El workflow de GitHub Actions (`.github/workflows/deploy.yml`) se ejecuta automáticamente cuando:
+- Se hace **push** o **merge** a la rama `master`
+- Se crea un **Pull Request** hacia `master`
+
+### Proceso Automático
+
+Cuando se hace merge a `master`, el sistema automáticamente:
+
+1. **Instala dependencias**: `npm install --legacy-peer-deps`
+2. **Construye la aplicación**: `npm run build:prod`
+3. **Ejecuta tests**: `npm test`
+4. **Verifica la build**: Confirma que los archivos estén generados
+5. **Despliega a Firebase**: Deploy automático a Firebase Hosting
+6. **Notifica el resultado**: Success o error del despliegue
+
+### URL de Producción
+
+Una vez desplegado, la aplicación estará disponible en:
+- **Firebase Hosting URL**: Se muestra en los logs del workflow
+
+### Configuración de Secretos
+
+El proyecto ya está configurado con los secretos necesarios en GitHub:
+- `FIREBASE_SERVICE_ACCOUNT`: Credenciales de Firebase
+- `FIREBASE_PROJECT_ID`: ID del proyecto Firebase
+
+### Ventajas del Despliegue Automático
+
+- **Sin intervención manual**: Todo es automático
+- **Despliegue rápido**: En minutos desde el merge
+- **Verificación automática**: Tests y build antes del deploy
+- **Feedback inmediato**: Notificaciones del estado del despliegue
+- **Rollback fácil**: Si hay problemas, hacer revert del merge
+- **Disponibilidad global**: Firebase CDN mundial
+
+### Importante
+
+- **Solo los merges a `master` despliegan**: Los cambios en otras ramas no se despliegan
+- **Tests obligatorios**: Si los tests fallan, no se despliega
+- **Build verificada**: Si la build falla, no se despliega
+- **Ambiente de producción**: El despliegue va directo a producción
+
+**No necesitas instalar nada localmente para desplegar**! Solo hacer merge a master y el sistema se encarga del resto.
 
 ## Buenas Prácticas
 
@@ -71,7 +159,7 @@ Este proyecto es una plantilla con lo necesario para comenzar a desarrollar el f
 - **Consistent Naming**: Convenciones de nomenclatura consistentes
 - **Error Handling**: Manejo robusto de errores en todas las capas
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 src/
@@ -128,7 +216,7 @@ src/
 └── main.ts                            # Punto de entrada de la aplicación
 ```
 
-## 🚀 Instalación
+## Instalación
 
 2. **Instalar dependencias**
    ```bash
@@ -172,20 +260,63 @@ Los estilos están organizados en:
 - `src/assets/styles/`: Estilos específicos por componente
 - Componentes individuales: Estilos encapsulados
 
-## 🧪 Testing
+## Testing
 
+El proyecto incluye un **conjunto completo de 332 pruebas unitarias** que cubren todos los aspectos críticos de la aplicación con una **excelente cobertura** del código.
+
+### 📊 Cobertura Actual - ¡Excelente!
+- **Statements**: **94.22%** (375/398)
+- **Lines**: **94.88%** (371/391)
+- **Functions**: **93.46%** (143/153)
+- **Branches**: **77.21%** (61/79)
+
+![Test Coverage Results](src/assets/coverage/image.png)
+*Resultado de las 332 pruebas unitarias ejecutadas exitosamente con alta cobertura de código*
+
+### 🚀 Comandos de Testing
 ```bash
-# Ejecutar tests unitarios
+# Ejecutar todas las pruebas (332 pruebas)
 npm test
 
-# Ejecutar tests con coverage
+# Ejecutar pruebas en modo watch
+npm run test:watch
+
+# Ejecutar pruebas con reporte de cobertura detallado
 npm run test:coverage
 
-# Ejecutar tests e2e
-npm run e2e
+# Ejecutar pruebas para CI/CD
+npm run test:ci
 ```
 
-## 📦 Build
+### 📋 Reporte Detallado de Cobertura
+Después de ejecutar `npm run test:coverage`, puedes ver el reporte HTML detallado en:
+```
+coverage/atom-challenge-fe-template/index.html
+```
+
+Este reporte muestra:
+- ✅ **Líneas cubiertas** (en verde)
+- ❌ **Líneas no cubiertas** (en rojo)
+- ⚠️ **Ramas condicionales parcialmente cubiertas** (en amarillo)
+- 📊 **Estadísticas por archivo y carpeta**
+
+### 🛠️ Tecnologías de Testing
+- **Jasmine**: Framework de testing
+- **Karma**: Test runner con Chrome Headless
+- **Angular Testing Utilities**: TestBed, ComponentFixture, etc.
+- **Coverage Istanbul**: Reportes de cobertura de código
+- **RxJS Testing**: Testing de observables y streams
+
+### ✨ Características de las Pruebas
+- **Mocking completo**: Servicios, presenters, routers mockeados
+- **Testing async**: Manejo correcto de promesas y observables
+- **Edge cases**: Casos límite y manejo de errores
+- **Accessibility**: Verificación de estructura semántica
+- **Integration**: Testing de integración entre componentes
+- **Form testing**: Validación exhaustiva de formularios reactivos
+- **Translation**: Testing de pipes de traducción
+
+## Build
 
 ```bash
 # Build de desarrollo
