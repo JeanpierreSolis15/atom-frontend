@@ -29,6 +29,7 @@
     "REGISTER_ERROR": "Error al crear la cuenta. Intenta nuevamente.",
     "SESSION_CLOSED": "Sesión cerrada correctamente",
     "USER_NOT_FOUND": "Usuario no encontrado. Redirigiendo al registro...",
+    "USER_NOT_FOUND_REDIRECT": "Usuario no encontrado. Redirigiendo al registro en 2 segundos...",
     "COMPLETE_REGISTRATION": "Usuario no encontrado. Por favor completa tu registro.",
     "BRAND_TITLE": "Atom - Tasks",
     "BRAND_SUBTITLE": "Gestiona tus tareas de manera eficiente y colaborativa",
