@@ -6,7 +6,7 @@ import {
   TaskRepository,
   UpdateTaskRequest,
 } from "@tasks/domain/repositories/task-repository.interface";
-import { catchError, Observable } from "rxjs";
+import { catchError, Observable, switchMap } from "rxjs";
 
 @Injectable()
 export class UpdateTaskUseCase {
@@ -17,6 +17,17 @@ export class UpdateTaskUseCase {
 
   execute(taskId: string, taskData: UpdateTaskRequest): Observable<Task> {
     return this.taskRepository.updateTask(taskId, taskData).pipe(
+      switchMap((updatedTask: Task) =>
+        this.taskRepository.getTasks().pipe(
+          switchMap(
+            () =>
+              new Observable<Task>(observer => {
+                observer.next(updatedTask);
+                observer.complete();
+              })
+          )
+        )
+      ),
       catchError(error => {
         this.notificationService.showError("Error al actualizar la tarea");
         throw error;

@@ -18,7 +18,6 @@ import { TaskFormComponent } from "@tasks/components/task-form/task-form.compone
 import { Task, TaskStatus } from "@tasks/domain/entities/task.entity";
 import { TASK_REPOSITORY, TaskRepository } from "@tasks/domain/repositories/task-repository.interface";
 import { TaskService } from "@tasks/services/task.service";
-import { TASKS_PROVIDERS } from "@tasks/tasks.config";
 import { BehaviorSubject, Subject, takeUntil } from "rxjs";
 
 const MY_DATE_FORMATS = {
@@ -55,7 +54,6 @@ const MY_DATE_FORMATS = {
     { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
     { provide: USER_REPOSITORY, useClass: UserRepositoryImpl },
-    ...TASKS_PROVIDERS,
   ],
   templateUrl: "./kanban.component.html",
   styleUrls: ["./kanban.component.scss"],
@@ -102,7 +100,7 @@ export class KanbanComponent implements OnInit, OnDestroy {
 
   private setupTasksSubscription(): void {
     this.taskRepository.tasks$.pipe(takeUntil(this.destroy$)).subscribe((tasks: Task[]) => {
-      this.tasks = tasks;
+      this.tasks = [...tasks];
       this.updateFilteredTasks();
       this.cdr.markForCheck();
     });
