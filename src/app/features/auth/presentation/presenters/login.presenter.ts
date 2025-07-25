@@ -1,11 +1,18 @@
 import { Injectable } from "@angular/core";
 import { LoginUseCase } from "@auth/application/use-cases/login.use-case";
+import { AuthErrorType } from "@auth/domain/entities/auth-error.entity";
 import { LoginRequest } from "@auth/domain/repositories/user-repository.interface";
 import { LoginView } from "@auth/presentation/views/login.view.interface";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable()
 export class LoginPresenter {
-  constructor(private loginUseCase: LoginUseCase) {}
+  private readonly REDIRECT_DELAY = 2000;
+
+  constructor(
+    private loginUseCase: LoginUseCase,
+    private translateService: TranslateService
+  ) {}
 
   async login(view: LoginView, credentials: LoginRequest): Promise<void> {
     view.showLoading();
@@ -17,7 +24,29 @@ export class LoginPresenter {
       view.navigateToKanban();
     } catch (error: any) {
       view.hideLoading();
-      view.showError(error.message || "Error al iniciar sesión");
+      this.handleLoginError(view, error);
     }
+  }
+
+  private handleLoginError(view: LoginView, error: any): void {
+    if (error.type === AuthErrorType.USER_NOT_FOUND) {
+      this.handleUserNotFound(view, error.email || "");
+    } else {
+      this.handleGenericError(view, error);
+    }
+  }
+
+  private handleUserNotFound(view: LoginView, email: string): void {
+    const message = this.translateService.instant("AUTH.USER_NOT_FOUND_REDIRECT");
+    view.showError(message);
+
+    setTimeout(() => {
+      view.navigateToRegister(email);
+    }, this.REDIRECT_DELAY);
+  }
+
+  private handleGenericError(view: LoginView, error: any): void {
+    const message = error.message || this.translateService.instant("AUTH.LOGIN_ERROR");
+    view.showError(message);
   }
 }

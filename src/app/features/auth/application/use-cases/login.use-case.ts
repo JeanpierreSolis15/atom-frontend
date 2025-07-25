@@ -1,4 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
+import { AuthErrorFactory, AuthErrorType } from "@auth/domain/entities/auth-error.entity";
 import {
   AuthResponse,
   LoginRequest,
@@ -6,7 +7,7 @@ import {
   UserRepository,
 } from "@auth/domain/repositories/user-repository.interface";
 import { NotificationService } from "@core/services/notification.service";
-import { catchError, Observable } from "rxjs";
+import { catchError, Observable, throwError } from "rxjs";
 
 @Injectable()
 export class LoginUseCase {
@@ -17,9 +18,12 @@ export class LoginUseCase {
 
   execute(credentials: LoginRequest): Observable<AuthResponse> {
     return this.userRepository.login(credentials).pipe(
-      catchError(error => {
-        this.notificationService.showError("Error al iniciar sesión");
-        throw error;
+      catchError((error: any) => {
+        const authError = AuthErrorFactory.fromHttpError(error, credentials.email);
+        if (authError.type !== AuthErrorType.USER_NOT_FOUND) {
+          this.notificationService.showError(authError.message);
+        }
+        return throwError(() => authError);
       })
     );
   }
