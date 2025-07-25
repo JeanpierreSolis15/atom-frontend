@@ -6,7 +6,7 @@ import {
   TASK_REPOSITORY,
   TaskRepository,
 } from "@tasks/domain/repositories/task-repository.interface";
-import { catchError, Observable } from "rxjs";
+import { catchError, Observable, switchMap } from "rxjs";
 
 @Injectable()
 export class CreateTaskUseCase {
@@ -17,6 +17,17 @@ export class CreateTaskUseCase {
 
   execute(taskData: CreateTaskRequest): Observable<Task> {
     return this.taskRepository.createTask(taskData).pipe(
+      switchMap((newTask: Task) =>
+        this.taskRepository.getTasks().pipe(
+          switchMap(
+            () =>
+              new Observable<Task>(observer => {
+                observer.next(newTask);
+                observer.complete();
+              })
+          )
+        )
+      ),
       catchError(error => {
         this.notificationService.showError("Error al crear la tarea");
         throw error;

@@ -1,8 +1,12 @@
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatToolbarModule } from "@angular/material/toolbar";
 import { Router } from "@angular/router";
 import { USER_REPOSITORY, UserRepository } from "@auth/domain/repositories/user-repository.interface";
 import { UserRepositoryImpl } from "@auth/infrastructure/repositories/user-repository.impl";
@@ -12,9 +16,9 @@ import { KanbanBoardComponent } from "@tasks/components/kanban-board/kanban-boar
 import { KanbanToolbarComponent } from "@tasks/components/kanban-toolbar/kanban-toolbar.component";
 import { TaskFormComponent } from "@tasks/components/task-form/task-form.component";
 import { Task, TaskStatus } from "@tasks/domain/entities/task.entity";
+import { TASK_REPOSITORY, TaskRepository } from "@tasks/domain/repositories/task-repository.interface";
 import { TaskService } from "@tasks/services/task.service";
-import { TASKS_PROVIDERS } from "@tasks/tasks.config";
-import { BehaviorSubject, debounceTime, distinctUntilChanged, Subject, takeUntil } from "rxjs";
+import { BehaviorSubject, Subject, takeUntil } from "rxjs";
 
 const MY_DATE_FORMATS = {
   parse: {
@@ -36,6 +40,11 @@ const MY_DATE_FORMATS = {
     CommonModule,
     MatNativeDateModule,
     MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatToolbarModule,
+    DragDropModule,
     KanbanToolbarComponent,
     KanbanBoardComponent,
     TaskFormComponent,
@@ -45,7 +54,6 @@ const MY_DATE_FORMATS = {
     { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
     { provide: USER_REPOSITORY, useClass: UserRepositoryImpl },
-    ...TASKS_PROVIDERS,
   ],
   templateUrl: "./kanban.component.html",
   styleUrls: ["./kanban.component.scss"],
@@ -64,11 +72,11 @@ export class KanbanComponent implements OnInit, OnDestroy {
   currentUser$ = new BehaviorSubject(this.userRepository.getCurrentUser());
 
   private destroy$ = new Subject<void>();
-  private tasksUpdate$ = new Subject<Task[]>();
   private isDragging = false;
 
   constructor(
     private taskService: TaskService,
+    @Inject(TASK_REPOSITORY) private taskRepository: TaskRepository,
     @Inject(USER_REPOSITORY) private userRepository: UserRepository,
     private dialog: MatDialog,
     private router: Router,
@@ -88,28 +96,18 @@ export class KanbanComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.tasksUpdate$.complete();
   }
 
   private setupTasksSubscription(): void {
-    this.tasksUpdate$
-      .pipe(
-        debounceTime(100),
-        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(tasks => {
-        this.tasks = tasks;
-        this.updateFilteredTasks();
-        this.cdr.markForCheck();
-      });
+    this.taskRepository.tasks$.pipe(takeUntil(this.destroy$)).subscribe((tasks: Task[]) => {
+      this.tasks = [...tasks];
+      this.updateFilteredTasks();
+      this.cdr.markForCheck();
+    });
   }
 
   private loadTasks(): void {
     this.taskService.getTasks().subscribe({
-      next: (tasks: Task[]) => {
-        this.tasksUpdate$.next(tasks);
-      },
       error: () => {},
     });
   }

@@ -32,7 +32,8 @@ export class TaskRepositoryImpl implements TaskRepository {
       tap(response => {
         if (response.success) {
           const tasks = response.data || [];
-          this.tasksSubject.next(Array.isArray(tasks) ? tasks.map(task => Task.create(task)) : []);
+          const mappedTasks = Array.isArray(tasks) ? tasks.map(task => Task.create(task)) : [];
+          this.tasksSubject.next(mappedTasks);
         } else {
           this.tasksSubject.next([]);
         }
@@ -46,13 +47,6 @@ export class TaskRepositoryImpl implements TaskRepository {
 
   createTask(taskData: CreateTaskRequest): Observable<Task> {
     return this.apiService.post<TaskResponse>("/tasks", taskData).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          const currentTasks = this.tasksSubject.value;
-          const newTask = Task.create(response.data);
-          this.tasksSubject.next([...currentTasks, newTask]);
-        }
-      }),
       map(response => {
         if (!response.data) {
           throw new Error("Respuesta inválida del servidor");
@@ -64,14 +58,6 @@ export class TaskRepositoryImpl implements TaskRepository {
 
   updateTask(taskId: string, taskData: UpdateTaskRequest): Observable<Task> {
     return this.apiService.put<TaskResponse>(`/tasks/${taskId}`, taskData).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          const currentTasks = this.tasksSubject.value;
-          const updatedTask = Task.create(response.data);
-          const updatedTasks = currentTasks.map(task => (task.id === taskId ? updatedTask : task));
-          this.tasksSubject.next(updatedTasks);
-        }
-      }),
       map(response => {
         if (!response.data) {
           throw new Error("Respuesta inválida del servidor");
@@ -82,13 +68,7 @@ export class TaskRepositoryImpl implements TaskRepository {
   }
 
   deleteTask(taskId: string): Observable<void> {
-    return this.apiService.delete<void>(`/tasks/${taskId}`).pipe(
-      tap(() => {
-        const currentTasks = this.tasksSubject.value;
-        const filteredTasks = currentTasks.filter(task => task.id !== taskId);
-        this.tasksSubject.next(filteredTasks);
-      })
-    );
+    return this.apiService.delete<void>(`/tasks/${taskId}`);
   }
 
   moveTask(moveData: MoveTaskRequest): Observable<void> {
@@ -97,14 +77,6 @@ export class TaskRepositoryImpl implements TaskRepository {
 
   updateTaskStatus(taskId: string, newStatus: TaskStatus): Observable<Task> {
     return this.apiService.put<TaskResponse>(`/tasks/${taskId}`, { status: newStatus }).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          const currentTasks = this.tasksSubject.value;
-          const updatedTask = Task.create(response.data);
-          const updatedTasks = currentTasks.map(task => (task.id === taskId ? updatedTask : task));
-          this.tasksSubject.next(updatedTasks);
-        }
-      }),
       map(response => {
         if (!response.data) {
           throw new Error("Respuesta inválida del servidor");
