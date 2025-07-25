@@ -42,6 +42,16 @@ jobs:
       - name: Build application
         run: npm run build:prod
 
+      - name: Verify build output
+        run: |
+          if [ ! -d "dist/atom-challenge-fe-template" ]; then
+            echo "Build directory not found!"
+            ls -la dist/
+            exit 1
+          fi
+          echo "Build directory exists"
+          ls -la dist/atom-challenge-fe-template/
+
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
