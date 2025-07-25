@@ -1,20 +1,20 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from "@angular/core";
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { Router } from "@angular/router";
+import { USER_REPOSITORY, UserRepository } from "@auth/domain/repositories/user-repository.interface";
+import { UserRepositoryImpl } from "@auth/infrastructure/repositories/user-repository.impl";
+import { NotificationService } from "@core/services/notification.service";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
-import { debounceTime, distinctUntilChanged, Subject, takeUntil } from "rxjs";
-
-import { NotificationService } from "../../../../core/services/notification.service";
-import { KanbanUtils } from "../../../../core/utils/kanban.utils";
-import { AuthService } from "../../../auth/services/auth.service";
-import { KanbanBoardComponent } from "../../components/kanban-board/kanban-board.component";
-import { KanbanToolbarComponent } from "../../components/kanban-toolbar/kanban-toolbar.component";
-import { TaskFormComponent } from "../../components/task-form/task-form.component";
-import { Task, TaskStatus } from "../../interfaces/task.interface";
-import { TaskService } from "../../services/task.service";
+import { KanbanBoardComponent } from "@tasks/components/kanban-board/kanban-board.component";
+import { KanbanToolbarComponent } from "@tasks/components/kanban-toolbar/kanban-toolbar.component";
+import { TaskFormComponent } from "@tasks/components/task-form/task-form.component";
+import { Task, TaskStatus } from "@tasks/domain/entities/task.entity";
+import { TaskService } from "@tasks/services/task.service";
+import { TASKS_PROVIDERS } from "@tasks/tasks.config";
+import { BehaviorSubject, debounceTime, distinctUntilChanged, Subject, takeUntil } from "rxjs";
 
 const MY_DATE_FORMATS = {
   parse: {
@@ -38,11 +38,14 @@ const MY_DATE_FORMATS = {
     MatDialogModule,
     KanbanToolbarComponent,
     KanbanBoardComponent,
+    TaskFormComponent,
     TranslateModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+    { provide: USER_REPOSITORY, useClass: UserRepositoryImpl },
+    ...TASKS_PROVIDERS,
   ],
   templateUrl: "./kanban.component.html",
   styleUrls: ["./kanban.component.scss"],
@@ -58,7 +61,7 @@ export class KanbanComponent implements OnInit, OnDestroy {
   };
 
   editingTask: Task | null = null;
-  currentUser$ = this.authService.currentUser$;
+  currentUser$ = new BehaviorSubject(this.userRepository.getCurrentUser());
 
   private destroy$ = new Subject<void>();
   private tasksUpdate$ = new Subject<Task[]>();
@@ -66,7 +69,7 @@ export class KanbanComponent implements OnInit, OnDestroy {
 
   constructor(
     private taskService: TaskService,
-    private authService: AuthService,
+    @Inject(USER_REPOSITORY) private userRepository: UserRepository,
     private dialog: MatDialog,
     private router: Router,
     private dateAdapter: DateAdapter<Date>,
@@ -103,14 +106,20 @@ export class KanbanComponent implements OnInit, OnDestroy {
   }
 
   private loadTasks(): void {
-    this.taskService.tasks$.pipe(takeUntil(this.destroy$)).subscribe(tasks => {
-      const validTasks = Array.isArray(tasks) ? tasks : [];
-      this.tasksUpdate$.next(validTasks);
+    this.taskService.getTasks().subscribe({
+      next: (tasks: Task[]) => {
+        this.tasksUpdate$.next(tasks);
+      },
+      error: () => {},
     });
   }
 
   private updateFilteredTasks(): void {
-    this.filteredTasks = KanbanUtils.updateFilteredTasks(this.tasks);
+    this.filteredTasks = {
+      [TaskStatus.TODO]: this.tasks.filter(task => task.status === TaskStatus.TODO),
+      [TaskStatus.IN_PROGRESS]: this.tasks.filter(task => task.status === TaskStatus.IN_PROGRESS),
+      [TaskStatus.DONE]: this.tasks.filter(task => task.status === TaskStatus.DONE),
+    };
   }
 
   onDrop(event: CdkDragDrop<Task[]>): void {
@@ -120,47 +129,31 @@ export class KanbanComponent implements OnInit, OnDestroy {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
 
       const task = event.container.data[event.currentIndex];
-      const newStatus = KanbanUtils.getStatusFromContainerId(event.container.id);
+      const newStatus = this.getStatusFromContainerId(event.container.id);
 
-      if (task && newStatus) {
-        const oldStatus = task.status;
-        task.status = newStatus;
-
-        this.updateFilteredTasks();
-
+      if (task && newStatus && task.status !== newStatus) {
         this.taskService.updateTaskStatus(task.id, newStatus).subscribe({
           next: () => {
             this.notificationService.showSuccess(this.translateService.instant("KANBAN.TASK_UPDATED"));
           },
           error: () => {
-            task.status = oldStatus;
-            this.updateFilteredTasks();
-            this.cdr.markForCheck();
             this.notificationService.showError(this.translateService.instant("KANBAN.TASK_UPDATE_ERROR"));
+            this.loadTasks();
           },
         });
       }
     }
-
-    this.isDragging = false;
-    this.cdr.markForCheck();
   }
 
   onDragStarted(): void {
     this.isDragging = true;
-    document.body.style.cursor = "grabbing";
-    document.body.classList.add("dragging");
   }
 
   onDragEnded(): void {
     this.isDragging = false;
-    document.body.style.cursor = "";
-    document.body.classList.remove("dragging");
-    this.cdr.markForCheck();
   }
 
   onAddTaskToColumn(status: TaskStatus): void {
-    this.editingTask = null;
     this.openTaskDialog(status);
   }
 
@@ -181,20 +174,28 @@ export class KanbanComponent implements OnInit, OnDestroy {
   }
 
   onLogout(): void {
-    this.authService.logout();
-    this.notificationService.showInfo(this.translateService.instant("AUTH.SESSION_CLOSED"));
+    this.userRepository.logout();
     this.router.navigate(["/auth/login"]);
   }
 
   private openTaskDialog(status?: TaskStatus): void {
     const dialogRef = this.dialog.open(TaskFormComponent, {
-      width: "600px",
-      data: {
-        task: this.editingTask,
-        defaultStatus: status,
-      },
+      width: "500px",
+      data: { task: this.editingTask, defaultStatus: status },
     });
 
-    dialogRef.afterClosed().subscribe();
+    dialogRef.afterClosed().subscribe(result => {
+      this.editingTask = null;
+      if (result) {
+        this.loadTasks();
+      }
+    });
+  }
+
+  private getStatusFromContainerId(containerId: string): TaskStatus | null {
+    if (containerId.includes("todo")) return TaskStatus.TODO;
+    if (containerId.includes("in-progress")) return TaskStatus.IN_PROGRESS;
+    if (containerId.includes("done")) return TaskStatus.DONE;
+    return null;
   }
 }

@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
-
-import { AuthGuard } from "./core/guards/auth.guard";
+import { authGuard } from "@core/guards/auth.guard";
 
 export const routes: Routes = [
   {
@@ -10,11 +9,11 @@ export const routes: Routes = [
   },
   {
     path: "auth",
-    loadChildren: () => import("./features/auth/auth.routes").then(m => m.AUTH_ROUTES),
+    loadChildren: () => import("@auth/auth.routes").then(m => m.AUTH_ROUTES),
   },
   {
     path: "kanban",
-    loadComponent: () => import("./features/tasks/pages/kanban/kanban.component").then(m => m.KanbanComponent),
-    canActivate: [AuthGuard],
+    loadComponent: () => import("@tasks/pages/kanban/kanban.component").then(m => m.KanbanComponent),
+    canActivate: [authGuard],
   },
 ];

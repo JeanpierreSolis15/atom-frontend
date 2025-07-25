@@ -18,6 +18,17 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@core/*": ["src/app/core/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@features/*": ["src/app/features/*"],
+      "@auth/*": ["src/app/features/auth/*"],
+      "@tasks/*": ["src/app/features/tasks/*"],
+      "@assets/*": ["src/assets/*"],
+      "@environments/*": ["src/environments/*"]
+    },
     "lib": [
       "ES2022",
       "dom"

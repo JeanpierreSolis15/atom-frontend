@@ -1,15 +1,15 @@
-import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-
-import { KanbanUtils } from "../../../../core/utils/kanban.utils";
-import { Task, TaskStatus } from "../../interfaces/task.interface";
-import { KanbanColumnComponent } from "../kanban-column/kanban-column.component";
+import { MatIconModule } from "@angular/material/icon";
+import { TranslateModule } from "@ngx-translate/core";
+import { KanbanColumnComponent } from "@tasks/components/kanban-column/kanban-column.component";
+import { Task, TaskStatus } from "@tasks/domain/entities/task.entity";
 
 @Component({
   selector: "app-kanban-board",
   standalone: true,
-  imports: [CommonModule, KanbanColumnComponent],
+  imports: [CommonModule, DragDropModule, MatIconModule, KanbanColumnComponent, TranslateModule],
   templateUrl: "./kanban-board.component.html",
   styleUrls: ["./kanban-board.component.scss"],
 })
@@ -28,18 +28,14 @@ export class KanbanBoardComponent {
   @Output() editTask = new EventEmitter<Task>();
   @Output() deleteTask = new EventEmitter<Task>();
 
-  taskStatuses = [TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE];
+  TaskStatus = TaskStatus;
 
-  getTasksByStatus(status: TaskStatus): Task[] {
-    return this.filteredTasks[status] || [];
+  getStatuses(): TaskStatus[] {
+    return [TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE];
   }
 
-  getConnectedContainers(currentStatus: TaskStatus): string[] {
-    return KanbanUtils.getConnectedContainers(currentStatus);
-  }
-
-  onTaskDrop(event: CdkDragDrop<Task[]>): void {
-    this.taskDrop.emit(event);
+  getConnectedContainers(): string[] {
+    return this.getStatuses().map(status => `kanban-column-${status.toLowerCase()}`);
   }
 
   trackByStatus(index: number, status: TaskStatus): string {

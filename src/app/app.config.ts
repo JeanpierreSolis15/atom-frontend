@@ -2,11 +2,12 @@ import { HttpClient, provideHttpClient, withInterceptors } from "@angular/common
 import { ApplicationConfig, importProvidersFrom } from "@angular/core";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { provideRouter } from "@angular/router";
+import { routes } from "@app/app.routes";
+import { AUTH_PROVIDERS } from "@auth/auth.config";
+import { AuthInterceptor } from "@core/interceptors/auth.interceptor";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-
-import { routes } from "./app.routes";
-import { AuthInterceptor } from "./core/interceptors/auth.interceptor";
+import { TASKS_PROVIDERS } from "@tasks/tasks.config";
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -19,14 +20,15 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([AuthInterceptor])),
     importProvidersFrom(
       TranslateModule.forRoot({
-        defaultLanguage: "es",
         loader: {
           provide: TranslateLoader,
           useFactory: HttpLoaderFactory,
           deps: [HttpClient],
         },
-        useDefaultLang: true,
+        defaultLanguage: "es",
       })
     ),
+    ...AUTH_PROVIDERS,
+    ...TASKS_PROVIDERS,
   ],
 };

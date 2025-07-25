@@ -1,49 +1,21 @@
-import { TranslateService } from "@ngx-translate/core";
-
-import { TaskStatus } from "../../features/tasks/interfaces/task.interface";
+import { TaskStatus } from "@tasks/domain/entities/task.entity";
 
 export class KanbanUtils {
-  static getStatusTitle(status: TaskStatus, translateService?: TranslateService): string {
-    if (translateService) {
-      switch (status) {
-        case TaskStatus.TODO:
-          return translateService.instant("KANBAN.STATUS.TODO");
-        case TaskStatus.IN_PROGRESS:
-          return translateService.instant("KANBAN.STATUS.IN_PROGRESS");
-        case TaskStatus.DONE:
-          return translateService.instant("KANBAN.STATUS.DONE");
-        default:
-          return status;
-      }
-    } else {
-      switch (status) {
-        case TaskStatus.TODO:
-          return "Por Hacer";
-        case TaskStatus.IN_PROGRESS:
-          return "En Progreso";
-        case TaskStatus.DONE:
-          return "Completado";
-        default:
-          return status;
-      }
-    }
-  }
-
   static getStatusColor(status: TaskStatus): string {
     switch (status) {
       case TaskStatus.TODO:
-        return "status-todo";
+        return "primary";
       case TaskStatus.IN_PROGRESS:
-        return "status-progress";
+        return "accent";
       case TaskStatus.DONE:
-        return "status-done";
+        return "success";
       default:
-        return "";
+        return "primary";
     }
   }
 
   static getContainerId(status: TaskStatus): string {
-    return `kanban-container-${status}`;
+    return `kanban-column-${status.toLowerCase()}`;
   }
 
   static getConnectedContainers(currentStatus: TaskStatus): string[] {
