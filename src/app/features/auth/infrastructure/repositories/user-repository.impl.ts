@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import {
-    AuthResponse,
-    LoginRequest,
-    RegisterRequest,
-    UserRepository,
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  UserRepository,
 } from "@auth/domain/repositories/user-repository.interface";
 import { User } from "@core/domain/entities/user.entity";
 import { ApiService } from "@core/services/api.service";
