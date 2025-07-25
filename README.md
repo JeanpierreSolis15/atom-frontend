@@ -262,16 +262,59 @@ Los estilos están organizados en:
 
 ## Testing
 
+El proyecto incluye un **conjunto completo de 332 pruebas unitarias** que cubren todos los aspectos críticos de la aplicación con una **excelente cobertura** del código.
+
+### 📊 Cobertura Actual - ¡Excelente!
+- **Statements**: **94.22%** (375/398)
+- **Lines**: **94.88%** (371/391)
+- **Functions**: **93.46%** (143/153)
+- **Branches**: **77.21%** (61/79)
+
+![Test Coverage Results](src/assets/coverage/image.png)
+*Resultado de las 332 pruebas unitarias ejecutadas exitosamente con alta cobertura de código*
+
+### 🚀 Comandos de Testing
 ```bash
-# Ejecutar tests unitarios
+# Ejecutar todas las pruebas (332 pruebas)
 npm test
 
-# Ejecutar tests con coverage
+# Ejecutar pruebas en modo watch
+npm run test:watch
+
+# Ejecutar pruebas con reporte de cobertura detallado
 npm run test:coverage
 
-# Ejecutar tests e2e
-npm run e2e
+# Ejecutar pruebas para CI/CD
+npm run test:ci
 ```
+
+### 📋 Reporte Detallado de Cobertura
+Después de ejecutar `npm run test:coverage`, puedes ver el reporte HTML detallado en:
+```
+coverage/atom-challenge-fe-template/index.html
+```
+
+Este reporte muestra:
+- ✅ **Líneas cubiertas** (en verde)
+- ❌ **Líneas no cubiertas** (en rojo)
+- ⚠️ **Ramas condicionales parcialmente cubiertas** (en amarillo)
+- 📊 **Estadísticas por archivo y carpeta**
+
+### 🛠️ Tecnologías de Testing
+- **Jasmine**: Framework de testing
+- **Karma**: Test runner con Chrome Headless
+- **Angular Testing Utilities**: TestBed, ComponentFixture, etc.
+- **Coverage Istanbul**: Reportes de cobertura de código
+- **RxJS Testing**: Testing de observables y streams
+
+### ✨ Características de las Pruebas
+- **Mocking completo**: Servicios, presenters, routers mockeados
+- **Testing async**: Manejo correcto de promesas y observables
+- **Edge cases**: Casos límite y manejo de errores
+- **Accessibility**: Verificación de estructura semántica
+- **Integration**: Testing de integración entre componentes
+- **Form testing**: Validación exhaustiva de formularios reactivos
+- **Translation**: Testing de pipes de traducción
 
 ## Build
 
