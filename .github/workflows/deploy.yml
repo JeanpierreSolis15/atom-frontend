@@ -24,11 +24,13 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: 🧹 Clear npm cache
+            - name: 🧹 Clear npm cache
         run: npm cache clean --force
 
       - name: 📦 Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
 
       - name: 🔍 Run linting
         run: npm run lint
