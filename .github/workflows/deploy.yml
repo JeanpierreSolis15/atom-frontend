@@ -47,22 +47,28 @@ jobs:
 
       - name: Verify Firebase Configuration
         run: |
-          if [ -z "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" ]; then
+          if [ ! -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
             echo "FIREBASE_SERVICE_ACCOUNT secret is empty"
             exit 1
           fi
-          if [ -z "${{ secrets.FIREBASE_PROJECT_ID }}" ]; then
+          if [ ! -n "$FIREBASE_PROJECT_ID" ]; then
             echo "FIREBASE_PROJECT_ID secret is empty"
             exit 1
           fi
           echo "Firebase secrets configured"
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Deploy to Firebase
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > $HOME/service-account.json
+          echo "$FIREBASE_SERVICE_ACCOUNT" > $HOME/service-account.json
           export GOOGLE_APPLICATION_CREDENTIALS=$HOME/service-account.json
-          firebase deploy --only hosting --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          firebase deploy --only hosting --project $FIREBASE_PROJECT_ID
           rm -f $HOME/service-account.json
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Deploy success
         if: success()
