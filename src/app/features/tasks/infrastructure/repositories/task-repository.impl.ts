@@ -82,13 +82,7 @@ export class TaskRepositoryImpl implements TaskRepository {
   }
 
   deleteTask(taskId: string): Observable<void> {
-    return this.apiService.delete<void>(`/tasks/${taskId}`).pipe(
-      tap(() => {
-        const currentTasks = this.tasksSubject.value;
-        const filteredTasks = currentTasks.filter(task => task.id !== taskId);
-        this.tasksSubject.next(filteredTasks);
-      })
-    );
+    return this.apiService.delete<void>(`/tasks/${taskId}`);
   }
 
   moveTask(moveData: MoveTaskRequest): Observable<void> {

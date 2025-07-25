@@ -49,6 +49,7 @@ export interface TaskErrorResponse {
   message: string;
 }
 export interface TaskRepository {
+  tasks$: Observable<Task[]>;
   getTasks(): Observable<Task[]>;
   createTask(taskData: CreateTaskRequest): Observable<Task>;
   updateTask(taskId: string, taskData: UpdateTaskRequest): Observable<Task>;
