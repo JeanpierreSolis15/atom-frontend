@@ -1,0 +1,14 @@
+<div class="kanban-container">
+  <app-kanban-toolbar [currentUser$]="currentUser$" (logout)="onLogout()"></app-kanban-toolbar>
+
+  <app-kanban-board
+    [tasks]="tasks"
+    [filteredTasks]="filteredTasks"
+    (taskDrop)="onDrop($event)"
+    (dragStart)="onDragStarted()"
+    (dragEnd)="onDragEnded()"
+    (addTask)="onAddTaskToColumn($event)"
+    (editTask)="onEditTask($event)"
+    (deleteTask)="onDeleteTask($event)"
+  ></app-kanban-board>
+</div>

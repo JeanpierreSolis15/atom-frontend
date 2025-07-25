@@ -1,0 +1,10 @@
+<div *ngIf="isLoading" class="translation-loader-overlay">
+  <mat-card class="translation-loader-card">
+    <div class="loader-content">
+      <div class="loader-icon">🌐</div>
+      <h3>{{ "COMMON.LOADING" | translate }}</h3>
+      <p>{{ "LANGUAGE.LOADING_TRANSLATIONS" | translate }}</p>
+      <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+    </div>
+  </mat-card>
+</div>

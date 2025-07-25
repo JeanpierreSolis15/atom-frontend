@@ -3,7 +3,7 @@
   "ignorePatterns": [
     "projects/**/*"
   ],
-  "plugins": ["unused-imports", "simple-import-sort"],
+  "plugins": ["unused-imports", "simple-import-sort", "prettier"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
@@ -18,37 +18,35 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "prettier"
       ],
       "rules": {
-        // ESLINT
+        "prettier/prettier": "error",
         "import/prefer-default-export": "off",
         "import/first": "error",
         "import/newline-after-import": "error",
         "import/no-duplicates": "error",
-        "max-len": [
-          "error",
-          120
-        ],
+        "max-len": "off",
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error",
-        // eslint-plugin-unused-imports rules
+        "class-methods-use-this": "off",
+        "no-param-reassign": "off",
+        "no-console": "warn",
+
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
           "warn",
           { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
         ],
-        // TypeScript Eslint rules
-        "@typescript-eslint/indent": [
-          "error",
-          4
-        ],
+
+        "@typescript-eslint/indent": "off",
         "@typescript-eslint/comma-dangle": "off",
         "@typescript-eslint/lines-between-class-members": "off",
-        "@typescript-eslint/quotes": ["error","double"],
+        "@typescript-eslint/quotes": "off",
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-explicit-any": 0,
-        // ANGUAR ESLINT
+
         "@angular-eslint/directive-selector": [
           "error",
           {

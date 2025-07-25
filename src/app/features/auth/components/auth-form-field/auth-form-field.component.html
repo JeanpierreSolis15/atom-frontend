@@ -1,0 +1,10 @@
+<mat-form-field appearance="outline" class="full-width">
+  <mat-label>
+    <mat-icon class="field-icon" *ngIf="icon">{{ icon }}</mat-icon>
+    {{ label | translate }}
+  </mat-label>
+  <input matInput [type]="type" [formControl]="control" [placeholder]="placeholder | translate" [required]="required" />
+  <mat-error *ngIf="getErrorMessage()">
+    {{ getErrorMessage() | translate }}
+  </mat-error>
+</mat-form-field>

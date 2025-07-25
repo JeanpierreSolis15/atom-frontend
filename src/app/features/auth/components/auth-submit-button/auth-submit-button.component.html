@@ -1,0 +1,5 @@
+<button mat-raised-button color="primary" [type]="type" class="submit-button" [disabled]="disabled || loading">
+  <mat-icon *ngIf="!loading && icon">{{ icon }}</mat-icon>
+  <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+  {{ loading ? (loadingText | translate) : (text | translate) }}
+</button>

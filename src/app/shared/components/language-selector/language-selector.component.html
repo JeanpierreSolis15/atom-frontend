@@ -1,0 +1,26 @@
+<div class="language-selector">
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="languageMenu"
+    class="language-btn"
+    [matTooltip]="'LANGUAGE.SELECT_LANGUAGE' | translate"
+  >
+    <mat-icon class="language-icon">
+      {{ currentLang === "es" ? "flag" : "language" }}
+    </mat-icon>
+  </button>
+
+  <mat-menu #languageMenu="matMenu" class="language-menu">
+    <button mat-menu-item (click)="setLanguage('es')" [class.active]="currentLang === 'es'">
+      <span class="flag-icon">🇪🇸</span>
+      <span>{{ "LANGUAGE.SPANISH" | translate }}</span>
+      <mat-icon *ngIf="currentLang === 'es'" class="check-icon">check</mat-icon>
+    </button>
+
+    <button mat-menu-item (click)="setLanguage('en')" [class.active]="currentLang === 'en'">
+      <span class="flag-icon">🇺🇸</span>
+      <span>{{ "LANGUAGE.ENGLISH" | translate }}</span>
+      <mat-icon *ngIf="currentLang === 'en'" class="check-icon">check</mat-icon>
+    </button>
+  </mat-menu>
+</div>

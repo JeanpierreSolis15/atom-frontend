@@ -13,6 +13,14 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "es",
+        "locales": {
+          "en": {
+            "translation": "src/locale/messages.en.xlf"
+          }
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -54,6 +62,38 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "production-en": {
+              "localize": ["en"],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "production-es": {
+              "localize": ["es"],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -66,6 +106,12 @@
             },
             "development": {
               "buildTarget": "atom-challenge-fe-template:build:development"
+            },
+            "production-en": {
+              "buildTarget": "atom-challenge-fe-template:build:production-en"
+            },
+            "production-es": {
+              "buildTarget": "atom-challenge-fe-template:build:production-es"
             }
           },
           "defaultConfiguration": "development"

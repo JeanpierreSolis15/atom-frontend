@@ -1,0 +1,48 @@
+<mat-card class="column-card">
+  <mat-card-header>
+    <mat-card-title [ngClass]="getStatusColor(status)">
+      {{ getStatusTitle(status) }}
+      <span class="task-count">({{ tasks.length }})</span>
+    </mat-card-title>
+    <button
+      mat-icon-button
+      class="add-task-btn"
+      (click)="addTask.emit(status)"
+      [matTooltip]="'KANBAN.ADD_TASK' | translate"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div
+      class="column-content"
+      cdkDropList
+      [id]="getContainerId(status)"
+      [cdkDropListData]="tasks"
+      [cdkDropListConnectedTo]="connectedContainers"
+      (cdkDropListDropped)="taskDrop.emit($event)"
+      (cdkDropListDragStarted)="dragStart.emit()"
+      (cdkDropListDragEnded)="dragEnd.emit()"
+    >
+      <div
+        class="task-card-wrapper"
+        *ngFor="let task of tasks; trackBy: trackByTaskId"
+        cdkDrag
+        [cdkDragData]="task"
+        [cdkDragDisabled]="false"
+      >
+        <app-task-card [task]="task" (edit)="editTask.emit($event)" (delete)="deleteTask.emit($event)"></app-task-card>
+      </div>
+
+      <div class="empty-state" *ngIf="tasks.length === 0">
+        <mat-icon class="empty-icon">assignment</mat-icon>
+        <p>{{ "KANBAN.NO_TASKS" | translate }}</p>
+        <button mat-stroked-button color="primary" class="create-task-btn" (click)="addTask.emit(status)">
+          <mat-icon>add</mat-icon>
+          {{ "KANBAN.CREATE_TASK" | translate }}
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

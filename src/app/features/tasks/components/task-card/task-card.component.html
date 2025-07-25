@@ -1,0 +1,36 @@
+<div class="task-card" [ngClass]="getTaskClasses()">
+  <div class="task-header">
+    <h3 class="task-title">{{ task.title }}</h3>
+    <div class="task-menu">
+      <button mat-icon-button [matMenuTriggerFor]="taskMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #taskMenu="matMenu">
+        <button mat-menu-item (click)="onEdit()">
+          <mat-icon>edit</mat-icon>
+          <span>{{ "COMMON.EDIT" | translate }}</span>
+        </button>
+        <button mat-menu-item (click)="onDelete()">
+          <mat-icon>delete</mat-icon>
+          <span>{{ "COMMON.DELETE" | translate }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <p *ngIf="task.description" class="task-description">
+    {{ task.description }}
+  </p>
+
+  <div class="task-meta">
+    <div class="task-priority" [ngClass]="'priority-' + task.priority.toLowerCase()">
+      <mat-icon>{{ getPriorityIcon(task.priority) }}</mat-icon>
+      <span>{{ getPriorityLabel(task.priority) }}</span>
+    </div>
+
+    <div class="task-due-date" *ngIf="task.dueDate" [class.overdue]="isOverdue(task.dueDate)">
+      <mat-icon>event</mat-icon>
+      <span>{{ formatDate(task.dueDate) }}</span>
+    </div>
+  </div>
+</div>

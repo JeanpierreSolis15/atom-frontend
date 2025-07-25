@@ -1,0 +1,23 @@
+.toolbar-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.user-menu-btn {
+  margin-left: 8px;
+}
