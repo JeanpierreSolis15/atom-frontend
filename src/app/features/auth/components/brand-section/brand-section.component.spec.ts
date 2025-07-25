@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatIconModule } from "@angular/material/icon";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { TranslateModule, TranslateService } from "@ngx-translate/core";
+import { TranslateModule } from "@ngx-translate/core";
+
 import { BrandSectionComponent } from "./brand-section.component";
 
 describe("BrandSectionComponent", () => {
   let component: BrandSectionComponent;
   let fixture: ComponentFixture<BrandSectionComponent>;
-  let translateService: TranslateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -16,7 +16,6 @@ describe("BrandSectionComponent", () => {
 
     fixture = TestBed.createComponent(BrandSectionComponent);
     component = fixture.componentInstance;
-    translateService = TestBed.inject(TranslateService);
 
     fixture.detectChanges();
   });
@@ -249,7 +248,7 @@ describe("BrandSectionComponent", () => {
     it("should handle screen reader accessibility", () => {
       fixture.detectChanges();
 
-      const textContent = fixture.nativeElement.textContent;
+      const { textContent } = fixture.nativeElement;
       expect(textContent).toBeTruthy();
       expect(textContent.trim().length).toBeGreaterThan(0);
     });

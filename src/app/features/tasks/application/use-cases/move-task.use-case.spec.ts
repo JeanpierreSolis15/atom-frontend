@@ -3,6 +3,7 @@ import { NotificationService } from "@core/services/notification.service";
 import { TaskStatus } from "@tasks/domain/entities/task.entity";
 import { MoveTaskRequest, TASK_REPOSITORY, TaskRepository } from "@tasks/domain/repositories/task-repository.interface";
 import { of, throwError } from "rxjs";
+
 import { MoveTaskUseCase } from "./move-task.use-case";
 
 describe("MoveTaskUseCase", () => {

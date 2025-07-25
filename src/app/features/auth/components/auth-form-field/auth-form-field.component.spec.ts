@@ -4,13 +4,13 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { TranslateModule, TranslateService } from "@ngx-translate/core";
+import { TranslateModule } from "@ngx-translate/core";
+
 import { AuthFormFieldComponent } from "./auth-form-field.component";
 
 describe("AuthFormFieldComponent", () => {
   let component: AuthFormFieldComponent;
   let fixture: ComponentFixture<AuthFormFieldComponent>;
-  let translateService: TranslateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -27,7 +27,6 @@ describe("AuthFormFieldComponent", () => {
 
     fixture = TestBed.createComponent(AuthFormFieldComponent);
     component = fixture.componentInstance;
-    translateService = TestBed.inject(TranslateService);
 
     component.control = new FormControl("");
     component.label = "Test Label";

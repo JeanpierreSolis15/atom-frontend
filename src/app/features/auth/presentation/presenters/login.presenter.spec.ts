@@ -11,6 +11,7 @@ import { LoginPresenter } from "./login.presenter";
 describe("LoginPresenter", () => {
   let presenter: LoginPresenter;
   let mockLoginUseCase: jasmine.SpyObj<LoginUseCase>;
+  // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
   let mockTranslateService: jasmine.SpyObj<TranslateService>;
   let mockView: jasmine.SpyObj<LoginView>;
 

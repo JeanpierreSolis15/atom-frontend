@@ -3,13 +3,13 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { TranslateModule, TranslateService } from "@ngx-translate/core";
+import { TranslateModule } from "@ngx-translate/core";
+
 import { AuthSubmitButtonComponent } from "./auth-submit-button.component";
 
 describe("AuthSubmitButtonComponent", () => {
   let component: AuthSubmitButtonComponent;
   let fixture: ComponentFixture<AuthSubmitButtonComponent>;
-  let translateService: TranslateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -25,7 +25,6 @@ describe("AuthSubmitButtonComponent", () => {
 
     fixture = TestBed.createComponent(AuthSubmitButtonComponent);
     component = fixture.componentInstance;
-    translateService = TestBed.inject(TranslateService);
 
     fixture.detectChanges();
   });

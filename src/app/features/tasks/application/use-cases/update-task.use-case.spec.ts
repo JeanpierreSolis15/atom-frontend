@@ -7,6 +7,7 @@ import {
   UpdateTaskRequest,
 } from "@tasks/domain/repositories/task-repository.interface";
 import { of, throwError } from "rxjs";
+
 import { UpdateTaskUseCase } from "./update-task.use-case";
 
 describe("UpdateTaskUseCase", () => {

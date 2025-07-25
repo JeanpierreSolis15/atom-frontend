@@ -15,6 +15,7 @@ import { KanbanBoardComponent } from "./kanban-board.component";
 describe("KanbanBoardComponent", () => {
   let component: KanbanBoardComponent;
   let fixture: ComponentFixture<KanbanBoardComponent>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
   let mockDialog: jasmine.SpyObj<MatDialog>;
 
   const mockTaskData = [
@@ -270,7 +271,7 @@ describe("KanbanBoardComponent", () => {
     const columns = fixture.debugElement.queryAll(By.directive(KanbanColumnComponent));
     const expectedContainers = component.getConnectedContainers();
 
-    columns.forEach(column => {
+    columns.forEach(() => {
       expect(expectedContainers.length).toBe(3);
     });
   });

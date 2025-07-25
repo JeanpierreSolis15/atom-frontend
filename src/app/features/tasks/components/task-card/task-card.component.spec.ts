@@ -6,8 +6,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TranslateModule } from "@ngx-translate/core";
-
 import { Task, TaskPriority, TaskStatus } from "@tasks/domain/entities/task.entity";
+
 import { TaskCardComponent } from "./task-card.component";
 
 describe("TaskCardComponent", () => {

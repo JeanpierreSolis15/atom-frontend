@@ -3,6 +3,7 @@ import { NotificationService } from "@core/services/notification.service";
 import { Task, TaskPriority, TaskStatus } from "@tasks/domain/entities/task.entity";
 import { TASK_REPOSITORY, TaskRepository } from "@tasks/domain/repositories/task-repository.interface";
 import { of, throwError } from "rxjs";
+
 import { DeleteTaskUseCase } from "./delete-task.use-case";
 
 describe("DeleteTaskUseCase", () => {
@@ -10,7 +11,7 @@ describe("DeleteTaskUseCase", () => {
   let mockTaskRepository: jasmine.SpyObj<TaskRepository>;
   let mockNotificationService: jasmine.SpyObj<NotificationService>;
 
-  const mockTask = Task.create({
+  Task.create({
     id: "1",
     title: "Test Task",
     description: "Test Description",
