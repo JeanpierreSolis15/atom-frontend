@@ -37,7 +37,7 @@ export class LoginPresenter {
   }
 
   private handleUserNotFound(view: LoginView, email: string): void {
-    const message = this.translateService.instant("AUTH.USER_NOT_FOUND_REDIRECT");
+    const message = "Usuario no encontrado. Redirigiendo al registro en 2 segundos...";
     view.showError(message);
 
     setTimeout(() => {
@@ -46,7 +46,7 @@ export class LoginPresenter {
   }
 
   private handleGenericError(view: LoginView, error: any): void {
-    const message = error.message || this.translateService.instant("AUTH.LOGIN_ERROR");
+    const message = error.message || "Error al iniciar sesión. Verifica tus credenciales.";
     view.showError(message);
   }
 }
