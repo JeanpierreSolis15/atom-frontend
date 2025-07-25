@@ -5,11 +5,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { KanbanUtils } from "@core/utils/kanban.utils";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
-
-import { KanbanUtils } from "../../../../core/utils/kanban.utils";
-import { Task, TaskStatus } from "../../interfaces/task.interface";
-import { TaskCardComponent } from "../task-card/task-card.component";
+import { TaskCardComponent } from "@tasks/components/task-card/task-card.component";
+import { Task, TaskStatus } from "@tasks/domain/entities/task.entity";
 
 @Component({
   selector: "app-kanban-column",

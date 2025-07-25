@@ -6,8 +6,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
-
-import { Task, TaskPriority, TaskStatus } from "../../interfaces/task.interface";
+import { Task, TaskPriority } from "@tasks/domain/entities/task.entity";
 
 @Component({
   selector: "app-task-card",
@@ -88,13 +87,13 @@ export class TaskCardComponent {
   getTaskClasses(): string {
     const classes = [];
 
-    if (this.task.status === TaskStatus.DONE) {
+    if (this.task.isCompleted) {
       classes.push("completed");
-    } else if (this.task.status === TaskStatus.IN_PROGRESS) {
+    } else if (this.task.isInProgress) {
       classes.push("in-progress");
     }
 
-    if (this.task.priority === TaskPriority.URGENT) {
+    if (this.task.isUrgent) {
       classes.push("urgent");
     }
 
@@ -103,11 +102,11 @@ export class TaskCardComponent {
 
   formatDate(date: Date): string {
     const lang = this.translateService.currentLang;
-    return new Date(date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+    return new Intl.DateTimeFormat(lang === "es" ? "es-ES" : "en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    });
+    }).format(new Date(date));
   }
 
   isOverdue(dueDate: Date): boolean {

@@ -19,11 +19,11 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
+import { FormUtils } from "@core/utils/form.utils";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
-
-import { FormUtils } from "../../../../core/utils/form.utils";
-import { CreateTaskRequest, Task, TaskPriority, TaskStatus, UpdateTaskRequest } from "../../interfaces/task.interface";
-import { TaskService } from "../../services/task.service";
+import { Task, TaskPriority, TaskStatus } from "@tasks/domain/entities/task.entity";
+import { CreateTaskRequest, UpdateTaskRequest } from "@tasks/domain/repositories/task-repository.interface";
+import { TaskService } from "@tasks/services/task.service";
 
 const MY_DATE_FORMATS = {
   parse: {

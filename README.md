@@ -1,6 +1,6 @@
-# Aplicación Kanban - Angular 17
+# ATOM FE CHALLENGE TEMPLATE - ANGULAR
 
-Una aplicación completa de gestión de tareas con tablero Kanban, construida con Angular 17 y Angular Material.
+Este proyecto es una plantilla con lo necesario para comenzar a desarrollar el front-end de la aplicación de la prueba técnica de Atom. Se base en Angular con la versión 17.3.6.
 
 ## 🚀 Características
 
@@ -34,50 +34,105 @@ Una aplicación completa de gestión de tareas con tablero Kanban, construida co
 - **TypeScript**: Tipado estático
 - **SCSS**: Estilos avanzados
 
+## Buenas Prácticas
+
+### **Arquitectura Hexagonal (Clean Architecture)**
+- **Separación de capas**: Dominio, aplicación, infraestructura y presentación claramente separadas
+- **Independencia de frameworks**: El dominio no depende de Angular ni de librerías externas
+- **Inversión de dependencias**: Las dependencias apuntan hacia el dominio
+- **Testabilidad**: Cada capa puede ser testeada de forma independiente
+
+### **Principios SOLID**
+- **S** - **Single Responsibility**: Cada clase tiene una única responsabilidad
+- **O** - **Open/Closed**: Abierto para extensión, cerrado para modificación
+- **L** - **Liskov Substitution**: Las implementaciones son intercambiables
+- **I** - **Interface Segregation**: Interfaces específicas para cada necesidad
+- **D** - **Dependency Inversion**: Dependemos de abstracciones, no de implementaciones
+
+### **Patrones de Diseño Implementados**
+- **Repository Pattern**: Abstracción del acceso a datos
+- **Use Case Pattern**: Casos de uso bien definidos para cada operación
+- **Presenter Pattern**: Separación de lógica de presentación
+- **Factory Pattern**: Creación de entidades de dominio
+- **Observer Pattern**: Reactividad con RxJS
+
+### **Características Técnicas Avanzadas**
+- **Standalone Components**: Componentes independientes sin módulos
+- **Lazy Loading**: Carga diferida de features
+- **Dependency Injection**: Inyección de dependencias bien configurada
+- **Reactive Programming**: Uso extensivo de RxJS y Observables
+- **Type Safety**: TypeScript con tipos estrictos
+- **Internationalization**: Soporte multiidioma con ngx-translate
+
+### **Escalabilidad y Mantenibilidad**
+- **Feature-based Structure**: Organización por características de negocio
+- **Clear Boundaries**: Límites claros entre features
+- **Reusable Components**: Componentes compartidos bien diseñados
+- **Consistent Naming**: Convenciones de nomenclatura consistentes
+- **Error Handling**: Manejo robusto de errores en todas las capas
+
 ## 📁 Estructura del Proyecto
 
 ```
 src/
 ├── app/
-│   ├── core/                    # Capa de infraestructura
-│   │   ├── guards/             # Guards de autenticación
-│   │   ├── interceptors/       # Interceptores HTTP
-│   │   ├── models/             # Modelos de dominio
-│   │   ├── services/           # Servicios de aplicación
-│   │   └── utils/              # Utilidades
-│   ├── shared/                 # Componentes compartidos
-│   │   ├── components/         # Componentes reutilizables
-│   │   ├── directives/         # Directivas personalizadas
-│   │   ├── interfaces/         # Interfaces TypeScript
-│   │   └── pipes/              # Pipes personalizados
-│   ├── features/               # Módulos de características
-│   │   ├── auth/               # Módulo de autenticación
-│   │   │   ├── login/          # Componente de login
-│   │   │   └── register/       # Componente de registro
-│   │   └── tasks/              # Módulo de tareas
-│   │       ├── components/     # Componentes de tareas
-│   │       ├── kanban/         # Tablero Kanban
-│   │       ├── models/         # Modelos de tareas
-│   │       └── services/       # Servicios de tareas
-│   ├── app.component.ts        # Componente principal
-│   ├── app.config.ts           # Configuración de la app
-│   └── app.routes.ts           # Rutas principales
-├── assets/                     # Recursos estáticos
-│   └── styles/                 # Estilos globales
-└── environments/               # Configuraciones de entorno
+│   ├── core/                           # Capa de infraestructura compartida
+│   │   ├── constants/                  # Constantes de la aplicación
+│   │   ├── domain/                     # Entidades de dominio compartidas
+│   │   │   └── entities/               # Entidades del dominio
+│   │   ├── guards/                     # Guards de autenticación
+│   │   ├── interceptors/               # Interceptores HTTP
+│   │   ├── services/                   # Servicios de aplicación
+│   │   └── utils/                      # Utilidades y helpers
+│   ├── features/                       # Módulos de características (Arquitectura Hexagonal)
+│   │   ├── auth/                       # Módulo de autenticación
+│   │   │   ├── application/            # Capa de aplicación
+│   │   │   │   └── use-cases/          # Casos de uso
+│   │   │   ├── components/             # Componentes de presentación
+│   │   │   ├── domain/                 # Capa de dominio
+│   │   │   │   └── repositories/       # Interfaces de repositorios
+│   │   │   ├── infrastructure/         # Capa de infraestructura
+│   │   │   │   └── repositories/       # Implementaciones de repositorios
+│   │   │   ├── pages/                  # Páginas de la aplicación
+│   │   │   ├── presentation/           # Capa de presentación
+│   │   │   │   ├── presenters/         # Presentadores
+│   │   │   │   ├── view-models/        # Modelos de vista
+│   │   │   │   └── views/              # Interfaces de vista
+│   │   │   ├── auth.config.ts          # Configuración de providers
+│   │   │   └── auth.routes.ts          # Rutas de autenticación
+│   │   └── tasks/                      # Módulo de tareas
+│   │       ├── application/            # Capa de aplicación
+│   │       │   └── use-cases/          # Casos de uso de tareas
+│   │       ├── components/             # Componentes de tareas
+│   │       ├── domain/                 # Capa de dominio
+│   │       │   ├── entities/           # Entidades de tareas
+│   │       │   └── repositories/       # Interfaces de repositorios
+│   │       ├── infrastructure/         # Capa de infraestructura
+│   │       │   └── repositories/       # Implementaciones de repositorios
+│   │       ├── pages/                  # Páginas de tareas
+│   │       ├── services/               # Servicios de tareas
+│   │       └── tasks.config.ts         # Configuración de providers
+│   ├── shared/                         # Componentes y utilidades compartidas
+│   │   ├── components/                 # Componentes reutilizables
+│   │   ├── directives/                 # Directivas personalizadas
+│   │   ├── interfaces/                 # Interfaces TypeScript
+│   │   └── pipes/                      # Pipes personalizados
+│   ├── app.component.ts                # Componente principal
+│   ├── app.config.ts                   # Configuración de la aplicación
+│   └── app.routes.ts                   # Rutas principales
+├── assets/                             # Recursos estáticos
+│   ├── i18n/                          # Archivos de internacionalización
+│   ├── images/                         # Imágenes
+│   └── styles/                         # Estilos globales y temas
+├── environments/                       # Configuraciones de entorno
+└── main.ts                            # Punto de entrada de la aplicación
 ```
 
 ## 🚀 Instalación
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone <repository-url>
-   cd atom-fe-challenge-template-ng-17
-   ```
-
 2. **Instalar dependencias**
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    ```
 
 3. **Configurar variables de entorno**
@@ -94,8 +149,6 @@ src/
    npm run build
    ```
 
-## 📋 Uso
-
 ### Autenticación
 1. Navegar a `/auth/login` o `/auth/register`
 2. Completar el formulario correspondiente
@@ -110,19 +163,7 @@ src/
 ### Estados de Tareas
 - **Por Hacer**: Tareas pendientes
 - **En Progreso**: Tareas en desarrollo
-- **Completado**: Tareas finalizadas
-
-## 🔧 Configuración
-
-### Variables de Entorno
-
-```typescript
-// src/environments/environment.ts
-export const environment = {
-  production: false,
-  apiUrl: "http://localhost:3000/api"  // URL de tu API
-};
-```
+- **Completado**: Tareas finalizada
 
 ### Estilos
 
@@ -154,7 +195,7 @@ npm run build
 npm run build --configuration production
 ```
 
-## 🚀 Despliegue
+## Despliegue
 
 1. **Construir la aplicación**
    ```bash
@@ -165,44 +206,30 @@ npm run build --configuration production
    - Los archivos se generan en `dist/`
    - Servir con cualquier servidor web estático
 
-## 🔒 Seguridad
+## Seguridad
 
 - **Autenticación JWT**: Tokens seguros
 - **Guards de ruta**: Protección de páginas
 - **Interceptores HTTP**: Manejo automático de tokens
 - **Validación de formularios**: Validación del lado cliente
 
-## 📱 Responsive Design
+## Responsive Design
 
 La aplicación es completamente responsive y funciona en:
 - Desktop
 - Tablet
 - Mobile
 
-## 🎨 Temas
+## Temas
 
-La aplicación usa Angular Material con el tema "indigo-pink" por defecto. Puedes personalizar los colores editando los archivos de estilos.
+La aplicación usa Angular Material con el tema "indigo-pink" por defecto. Puedes personalizar los colores editando los archivos de estilos
 
-## 🤝 Contribución
+## Licencia
 
-1. Fork el proyecto
-2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir un Pull Request
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles
 
-## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 🆘 Soporte
-
-Si tienes problemas o preguntas:
-1. Revisar la documentación
-2. Buscar en issues existentes
-3. Crear un nuevo issue con detalles del problema
-
-## 🔄 Changelog
+## Changelog
 
 ### v1.0.0
 - ✅ Sistema de autenticación completo

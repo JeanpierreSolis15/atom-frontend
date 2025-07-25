@@ -1,15 +1,15 @@
-import { HttpErrorResponse, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Router } from "@angular/router";
-import { catchError, throwError } from "rxjs";
+import { USER_REPOSITORY } from "@auth/domain/repositories/user-repository.interface";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 
-import { AuthService } from "../../features/auth/services/auth.service";
-
-export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn) {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  const token = authService.getAccessToken();
+export const AuthInterceptor: HttpInterceptorFn = (
+  request: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<any> => {
+  const userRepository = inject(USER_REPOSITORY);
+  const token = userRepository.getAccessToken();
 
   if (token) {
     request = request.clone({
@@ -22,10 +22,9 @@ export function AuthInterceptor(request: HttpRequest<unknown>, next: HttpHandler
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        authService.logout();
-        router.navigate(["/auth/login"]);
+        userRepository.logout();
       }
       return throwError(() => error);
     })
   );
-}
+};

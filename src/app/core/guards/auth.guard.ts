@@ -1,24 +1,15 @@
-import { Injectable } from "@angular/core";
-import { CanActivate, Router, UrlTree } from "@angular/router";
-import { Observable } from "rxjs";
+import { inject } from "@angular/core";
+import { Router } from "@angular/router";
+import { USER_REPOSITORY } from "@auth/domain/repositories/user-repository.interface";
 
-import { AuthService } from "../../features/auth/services/auth.service";
+export const authGuard = () => {
+  const userRepository = inject(USER_REPOSITORY);
+  const router = inject(Router);
 
-@Injectable({
-  providedIn: "root",
-})
-export class AuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
-
-  canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.authService.isAuthenticated()) {
-      return true;
-    }
-
-    this.router.navigate(["/auth/login"]);
-    return false;
+  if (userRepository.isAuthenticated()) {
+    return true;
   }
-}
+
+  router.navigate(["/auth/login"]);
+  return false;
+};

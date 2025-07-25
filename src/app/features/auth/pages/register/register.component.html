@@ -1,77 +1,64 @@
-<div class="register-container">
-  <div class="register-background">
-    <div class="register-card">
-      <app-brand-section
-        title="AUTH.REGISTER_BRAND_TITLE"
-        subtitle="AUTH.REGISTER_BRAND_SUBTITLE"
-        icon="task_alt"
-      ></app-brand-section>
+<div class="auth-container">
+  <div class="auth-card">
+    <app-brand-section
+      [title]="'AUTH.REGISTER' | translate"
+      [subtitle]="'AUTH.REGISTER_SUBTITLE' | translate"
+      [icon]="'person_add'"
+    >
+    </app-brand-section>
 
-      <mat-card class="register-form-card">
-        <mat-card-header>
-          <mat-card-title class="form-title">
-            <mat-icon class="title-icon">person_add</mat-icon>
-            {{ "AUTH.CREATE_ACCOUNT" | translate }}
-          </mat-card-title>
-          <mat-card-subtitle class="form-subtitle">
-            {{ "AUTH.REGISTER_SUBTITLE" | translate }}
-          </mat-card-subtitle>
-        </mat-card-header>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <app-auth-form-field
+        [control]="nameControl"
+        [label]="'AUTH.FIRST_NAME' | translate"
+        [placeholder]="'AUTH.FIRST_NAME_PLACEHOLDER' | translate"
+        [icon]="'person'"
+        [type]="'text'"
+        [required]="true"
+      >
+      </app-auth-form-field>
 
-        <mat-card-content>
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-            <app-auth-form-field
-              [control]="nameControl"
-              label="AUTH.FIRST_NAME"
-              placeholder="AUTH.FIRST_NAME_PLACEHOLDER"
-              icon="person"
-              type="text"
-              [required]="true"
-              [errorMessage]="getErrorMessage('name')"
-            ></app-auth-form-field>
+      <app-auth-form-field
+        [control]="lastNameControl"
+        [label]="'AUTH.LAST_NAME' | translate"
+        [placeholder]="'AUTH.LAST_NAME_PLACEHOLDER' | translate"
+        [icon]="'person'"
+        [type]="'text'"
+        [required]="true"
+      >
+      </app-auth-form-field>
 
-            <app-auth-form-field
-              [control]="lastNameControl"
-              label="AUTH.LAST_NAME"
-              placeholder="AUTH.LAST_NAME_PLACEHOLDER"
-              icon="person_outline"
-              type="text"
-              [required]="true"
-              [errorMessage]="getErrorMessage('lastName')"
-            ></app-auth-form-field>
+      <app-auth-form-field
+        [control]="emailControl"
+        [label]="'AUTH.EMAIL' | translate"
+        [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
+        [icon]="'email'"
+        [type]="'email'"
+        [required]="true"
+      >
+      </app-auth-form-field>
 
-            <app-auth-form-field
-              [control]="emailControl"
-              label="AUTH.EMAIL"
-              placeholder="AUTH.EMAIL_PLACEHOLDER"
-              icon="email"
-              type="email"
-              [required]="true"
-              [errorMessage]="getErrorMessage('email')"
-            ></app-auth-form-field>
+      <div *ngIf="viewModel.errorMessage" class="error-message">
+        {{ viewModel.errorMessage }}
+      </div>
 
-            <app-auth-submit-button
-              [loading]="loading"
-              [disabled]="registerForm.invalid"
-              icon="person_add"
-              loadingText="AUTH.CREATING_ACCOUNT"
-              text="AUTH.REGISTER_BUTTON"
-            ></app-auth-submit-button>
+      <app-auth-submit-button
+        [loading]="viewModel.loading"
+        [disabled]="!viewModel.formValid"
+        [text]="'AUTH.REGISTER' | translate"
+        [loadingText]="'AUTH.CREATING_ACCOUNT' | translate"
+        [type]="'submit'"
+      >
+      </app-auth-submit-button>
+    </form>
 
-            <div class="divider">
-              <span class="divider-text">{{ "AUTH.OR_DIVIDER" | translate }}</span>
-            </div>
-
-            <div class="login-link">
-              <span class="login-text">{{ "AUTH.ALREADY_HAVE_ACCOUNT" | translate }}</span>
-              <a routerLink="/auth/login" class="login-button">
-                <mat-icon>login</mat-icon>
-                {{ "AUTH.LOGIN_LINK" | translate }}
-              </a>
-            </div>
-          </form>
-        </mat-card-content>
-      </mat-card>
+    <div class="auth-footer">
+      <p>
+        {{ "AUTH.ALREADY_HAVE_ACCOUNT" | translate }}
+        <a routerLink="/auth/login" class="auth-link">
+          {{ "AUTH.SIGN_IN" | translate }}
+        </a>
+      </p>
     </div>
   </div>
 </div>

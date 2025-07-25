@@ -1,30 +1,34 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
-import { MatIconModule } from "@angular/material/icon";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { Router, RouterModule } from "@angular/router";
-import { TranslateModule, TranslateService } from "@ngx-translate/core";
-
-import { NotificationService } from "../../../../core/services/notification.service";
-import { FormUtils } from "../../../../core/utils/form.utils";
-import { AuthFormFieldComponent } from "../../components/auth-form-field/auth-form-field.component";
-import { AuthSubmitButtonComponent } from "../../components/auth-submit-button/auth-submit-button.component";
-import { BrandSectionComponent } from "../../components/brand-section/brand-section.component";
-import { LoginRequest } from "../../interfaces/auth.interface";
-import { AuthService } from "../../services/auth.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { Router } from "@angular/router";
+import { AuthFormFieldComponent } from "@auth/components/auth-form-field/auth-form-field.component";
+import { AuthSubmitButtonComponent } from "@auth/components/auth-submit-button/auth-submit-button.component";
+import { BrandSectionComponent } from "@auth/components/brand-section/brand-section.component";
+import { LoginRequest } from "@auth/domain/repositories/user-repository.interface";
+import { LoginPresenter } from "@auth/presentation/presenters/login.presenter";
+import { LoginViewModel } from "@auth/presentation/view-models/login.view-model";
+import { LoginView } from "@auth/presentation/views/login.view.interface";
+import { TranslateModule } from "@ngx-translate/core";
+import { Subject, takeUntil } from "rxjs";
 
 @Component({
   selector: "app-login",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule,
     MatCardModule,
-    MatIconModule,
-    MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
     TranslateModule,
     BrandSectionComponent,
     AuthFormFieldComponent,
@@ -33,22 +37,35 @@ import { AuthService } from "../../services/auth.service";
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy, LoginView {
   loginForm!: FormGroup;
-  loading = false;
-  emailControl!: FormControl;
+  viewModel: LoginViewModel = {
+    loading: false,
+    formValid: false,
+    errorMessage: "",
+  };
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private loginPresenter: LoginPresenter,
     private router: Router,
-    private notificationService: NotificationService,
-    private translateService: TranslateService
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.emailControl = this.loginForm.get("email") as FormControl;
+    this.setupFormValidation();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get emailControl(): FormControl {
+    return this.loginForm.get("email") as FormControl;
   }
 
   private initForm(): void {
@@ -57,36 +74,59 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  private setupFormValidation(): void {
+    this.loginForm.statusChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.viewModel.formValid = this.loginForm.valid;
+      this.cdr.markForCheck();
+    });
+  }
+
+  async onSubmit(): Promise<void> {
     if (this.loginForm.valid) {
-      this.loading = true;
-
       const credentials: LoginRequest = this.loginForm.value;
-
-      this.authService.login(credentials).subscribe({
-        next: () => {
-          this.notificationService.showSuccess(this.translateService.instant("AUTH.WELCOME_BACK"));
-          this.router.navigate(["/kanban"]);
-        },
-        error: error => {
-          this.loading = false;
-
-          if (error.type === "USER_NOT_FOUND") {
-            this.router.navigate(["/auth/register"], {
-              queryParams: { email: error.email },
-            });
-          } else {
-            this.notificationService.showError(this.translateService.instant("AUTH.LOGIN_ERROR"));
-          }
-        },
-      });
-    } else {
-      FormUtils.markFormGroupTouched(this.loginForm);
+      await this.loginPresenter.login(this, credentials);
     }
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.loginForm.get(controlName);
-    return FormUtils.getErrorMessage(control, this.translateService);
+  showLoading(): void {
+    this.viewModel.loading = true;
+    this.cdr.markForCheck();
+  }
+
+  hideLoading(): void {
+    this.viewModel.loading = false;
+    this.cdr.markForCheck();
+  }
+
+  showError(message: string): void {
+    this.viewModel.errorMessage = message;
+    this.cdr.markForCheck();
+  }
+
+  clearError(): void {
+    this.viewModel.errorMessage = "";
+    this.cdr.markForCheck();
+  }
+
+  setFormValid(isValid: boolean): void {
+    this.viewModel.formValid = isValid;
+    this.cdr.markForCheck();
+  }
+
+  navigateToRegister(email?: string): void {
+    if (email) {
+      this.router.navigate(["/auth/register"], { queryParams: { email } });
+    } else {
+      this.router.navigate(["/auth/register"]);
+    }
+  }
+
+  navigateToKanban(): void {
+    this.router.navigate(["/kanban"]);
+  }
+
+  updateFormValidity(isValid: boolean): void {
+    this.viewModel.formValid = isValid;
+    this.cdr.markForCheck();
   }
 }

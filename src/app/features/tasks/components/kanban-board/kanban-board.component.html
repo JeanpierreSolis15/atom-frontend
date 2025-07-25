@@ -1,10 +1,10 @@
 <div class="kanban-board">
-  <div class="kanban-column" *ngFor="let status of taskStatuses; trackBy: trackByStatus">
+  <div class="kanban-column" *ngFor="let status of getStatuses(); trackBy: trackByStatus">
     <app-kanban-column
       [status]="status"
-      [tasks]="getTasksByStatus(status)"
-      [connectedContainers]="getConnectedContainers(status)"
-      (taskDrop)="onTaskDrop($event)"
+      [tasks]="filteredTasks[status]"
+      [connectedContainers]="getConnectedContainers()"
+      (taskDrop)="taskDrop.emit($event)"
       (dragStart)="dragStart.emit()"
       (dragEnd)="dragEnd.emit()"
       (addTask)="addTask.emit($event)"
