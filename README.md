@@ -316,27 +316,6 @@ Este reporte muestra:
 - **Form testing**: Validación exhaustiva de formularios reactivos
 - **Translation**: Testing de pipes de traducción
 
-## Build
-
-```bash
-# Build de desarrollo
-npm run build
-
-# Build de producción
-npm run build --configuration production
-```
-
-## Despliegue
-
-1. **Construir la aplicación**
-   ```bash
-   npm run build --configuration production
-   ```
-
-2. **Servir archivos estáticos**
-   - Los archivos se generan en `dist/`
-   - Servir con cualquier servidor web estático
-
 ## Seguridad
 
 - **Autenticación JWT**: Tokens seguros
